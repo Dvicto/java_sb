@@ -24,7 +24,8 @@ public class UserDAOImpl implements UserDAO{
     @SuppressWarnings("unchcked")
     public List<User> allUsers() {
         Session session = sessionFactory.getCurrentSession();
-        return session.createQuery("from User").list();
+            return session.createQuery("from User").list();
+
     }
 
     @Override
@@ -40,24 +41,20 @@ public class UserDAOImpl implements UserDAO{
     }
 
     @Override
-    public void transfer(String from, String to, int value) {
+    public void transfer(int from, int to, int value) {
         Session session = sessionFactory.getCurrentSession();
-        User user1 = getByName(from);
-        User user2 = getByName(to);
+        User user1 = getById(from);
+        User user2 = getById(to);
         user1.setMoney(user1.getMoney() - value);
         user2.setMoney(user2.getMoney() + value);
         session.update(user1);
         session.update(user2);
+
     }
 
     @Override
     public User getById(int id) {
         Session session = sessionFactory.getCurrentSession();
         return session.get(User.class, id);
-    }
-
-    public User getByName(String name) {
-        Session session = sessionFactory.getCurrentSession();
-        return session.get(User.class, name);
     }
 }

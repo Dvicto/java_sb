@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
-    public void transfer(String from, String to, int value) {
+    public void transfer(int from, int to, int value) {
         userDAO.transfer(from, to, value);
     }
 
@@ -44,8 +44,4 @@ public class UserServiceImpl implements UserService {
         return userDAO.getById(id);
     }
 
-    @Transactional
-    public  User getByName(String name) {
-        return userDAO.getByName(name);
-    }
 }

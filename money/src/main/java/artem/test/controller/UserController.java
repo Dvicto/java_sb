@@ -3,11 +3,12 @@ package artem.test.controller;
 import artem.test.service.UserService;
 import artem.test.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
+import org.springframework.orm.hibernate5.HibernateJdbcException;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import artem.test.model.User;
 
@@ -31,7 +32,7 @@ public class UserController {
         return modelAndView;
     }
 
-    @RequestMapping(value = "/transfer", method = RequestMethod.GET)
+    @GetMapping(value = "/transfer")
     public ModelAndView transferPage() {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("/transferPage");
@@ -39,14 +40,23 @@ public class UserController {
     }
 
     @RequestMapping(value = "/transfer", method = RequestMethod.POST)
-    public ModelAndView transfer(@ModelAttribute("User") String from, String to, int value) {
+    public ModelAndView transfer(
+            @RequestParam(name = "from", required = false) Integer from,
+            @RequestParam(name = "to", required = false) Integer to,
+            @RequestParam(name = "value", required = false) Integer value)
+    {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("redirect:/");
-        userService.transfer(from, to, value);
+        try {
+            userService.transfer(from, to, value);
+        } catch (Exception e) {
+            System.out.println(e);
+            modelAndView.setViewName("/transferPage");
+        }
         return modelAndView;
     }
 
-    @RequestMapping(value = "/add", method = RequestMethod.GET)
+    @GetMapping(value = "/add")
     public ModelAndView addPage() {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("/editPage");
@@ -54,14 +64,19 @@ public class UserController {
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public ModelAndView addUser(@ModelAttribute("User") User user) {
+    public ModelAndView addUser(@ModelAttribute("user") User user) {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("redirect:/");
+        try {
         userService.add(user);
+        } catch (NullPointerException | HibernateJdbcException | NumberFormatException e) {
+            System.out.println(e);
+            modelAndView.setViewName("/editPage");
+        }
         return modelAndView;
     }
 
-    @RequestMapping(value="/delete/{id}", method = RequestMethod.GET)
+    @RequestMapping(value ="/delete/{id}", method = RequestMethod.GET)
     public ModelAndView deleteUser(@PathVariable("id") int id) {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("redirect:/");

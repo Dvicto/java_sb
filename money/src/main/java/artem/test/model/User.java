@@ -1,5 +1,8 @@
 package artem.test.model;
 
+import com.sun.istack.internal.NotNull;
+import org.springframework.lang.NonNull;
+
 import javax.persistence.*;
 
 
@@ -12,15 +15,19 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @NonNull
     @Column(name = "name")
     private String name;
 
+    @NonNull
     @Column(name = "nick")
     private String nick;
 
+    @NonNull
     @Column(name = "money")
     private int money;
 
+    @NonNull
     @Column(name = "coin")
     private int coin;
 
